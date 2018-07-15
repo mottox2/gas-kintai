@@ -1,22 +1,23 @@
 function doPost(e) {
   const params = e.parameter
-  sendResponse(params.text)
+  addRecord('new record!')
+  // postToSlack(params.text)
 }
 
 function getProperties() {
   const properties = PropertiesService.getScriptProperties();
-  const FILE_NAME = properties.getProperty('FILE_NAME');
+  const SHEET_ID = properties.getProperty('SHEET_ID');
   const SLACK_WEBHOOK_URL = properties.getProperty('SLACK_WEBHOOK_URL');
   const SLACK_CHANNEL = properties.getProperty('SLACK_CHANNEL');
   return {
-    FILE_NAME: FILE_NAME,
+    SHEET_ID: SHEET_ID,
     SLACK_WEBHOOK_URL: SLACK_WEBHOOK_URL,
     SLACK_CHANNEL: SLACK_CHANNEL
   }
 }
 
 function doGet(e) {
-  sendResponse('Message')
+  postToSlack('Message')
   const payload = JSON.stringify({
     text: 'Test Response'
   })
@@ -26,7 +27,7 @@ function doGet(e) {
   return res;
 }
 
-function sendResponse(message) {
+function postToSlack(message) {
   const properties = getProperties()
   const payload = {
     "text": message,
