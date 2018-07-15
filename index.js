@@ -1,7 +1,14 @@
 function doPost(e) {
   const params = e.parameter
-  addRecord('new record!')
-  // postToSlack(params.text)
+  const action = getAction(removePrefix(params.text))
+  addRecord(params.text)
+  dispatch(action, {
+    text: params.text
+  })
+}
+
+function removePrefix(text) {
+  return text.replace(/kintai\ ?/, '')
 }
 
 function getProperties() {
@@ -16,15 +23,15 @@ function getProperties() {
   }
 }
 
-function doGet(e) {
-  postToSlack('Message')
-  const payload = JSON.stringify({
-    text: 'Test Response'
+function Test() {
+  const params = {
+    text: 'kintai おはよう'
+  }
+  const action = getAction(removePrefix(params.text))
+  addRecord(params.text)
+  dispatch(action, {
+    text: params.text
   })
-  const res = ContentService.createTextOutput();
-  res.setMimeType(ContentService.MimeType.JSON);
-  res.setContent(payload);
-  return res;
 }
 
 function postToSlack(message) {
