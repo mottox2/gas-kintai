@@ -1,5 +1,3 @@
 **/**
-!index.js
-!sheet.js
-!event.js
+!**/**.js
 !appsscript.json

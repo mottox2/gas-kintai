@@ -4,7 +4,3 @@ function addRecord(record) {
   const sheet = spreadsheet.getSheets()[0];
   sheet.getRange(sheet.getLastRow() + 1, 1).setValue(record);
 }
-
-function testAddRecord() {
-  addRecord('TEST')
-}
