@@ -13,13 +13,15 @@ function getActionType(text) {
 }
 
 function doAction(event, args) {
+  // with TimeZone
+  const m = Moment.moment().utc().add(9, 'hours')
   switch(event) {
     case ADD_START_RECORD:
-      addRecord('START')
-      postToSlack('STARTしました')
+      addRecord('START: ' + m.format('HH:mm'))
+      postToSlack('STARTしました' + m.format('HH:mm'))
       break
     case ADD_END_RECORD:
-      addRecord('END')
+      addRecord('END: ' + m.format('HH:mm'))
       postToSlack('ENDしました')
       break;
     default:
