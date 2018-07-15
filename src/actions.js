@@ -8,11 +8,11 @@ var triggers = {
   'おわり': ADD_END_RECORD,
 }
 
-function getAction(text) {
+function getActionType(text) {
   return triggers[text]
 }
 
-function dispatch(event, args) {
+function doAction(event, args) {
   switch(event) {
     case ADD_START_RECORD:
       addRecord('START')
