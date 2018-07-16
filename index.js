@@ -1,7 +1,6 @@
 function doPost(e) {
   const params = e.parameter
   const action = getActionType(removePrefix(params.text))
-  addRecord(params.text)
   doAction(action, {
     text: params.text
   })

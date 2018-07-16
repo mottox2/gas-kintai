@@ -1,7 +1,7 @@
 function test() {
   const e = {
     parameter: {
-      text: 'kintai start'
+      text: 'kintai end'
     }
   }
   doPost(e)

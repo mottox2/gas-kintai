@@ -17,12 +17,17 @@ function doAction(event, args) {
   const m = Moment.moment().utc().add(9, 'hours')
   switch(event) {
     case ADD_START_RECORD:
-      addRecord('START: ' + m.format('HH:mm'))
-      postToSlack('STARTしました' + m.format('HH:mm'))
+      addRecord({
+        date: m.format('L'),
+        start: m.format('HH:mm')
+      })
+      postToSlack('STARTしました: ' + m.format('HH:mm'))
       break
     case ADD_END_RECORD:
-      addRecord('END: ' + m.format('HH:mm'))
-      postToSlack('ENDしました')
+      updateLastRecord({
+        end: m.format('HH:mm')
+      })
+      postToSlack('ENDしました: ' + m.format('HH:mm'))
       break;
     default:
       throw 'Event is not found: ' + event
