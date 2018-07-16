@@ -1,18 +1,18 @@
-function addRecord(record) {
-  const sheet = findOrCreateSheetByName('kintai')
+function addRecord(payload) {
+  const sheet = findOrCreateSheetByName(payload.userName)
   sheet.appendRow([
-    record.date, record.start, ''
+    payload.date, payload.start, ''
   ])
 }
 
-function updateLastRecord(record) {
-  const sheet = findOrCreateSheetByName('kintai')
+function updateLastRecord(payload) {
+  const sheet = findOrCreateSheetByName(payload.userName)
   const range = sheet.getRange(sheet.getLastRow(), 3, 1, 1)
-  range.setValue(record.end);
+  range.setValue(payload.end);
 }
 
 function getLastRecord() {
-  const sheet = findOrCreateSheetByName('kintai')
+  const sheet = findOrCreateSheetByName(record.userName)
   const lastRow = sheet.getRange(sheet.getLastRow(), 1, 1, sheet.getLastColumn())
   const values = lastRow.getValues()
 

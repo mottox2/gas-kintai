@@ -2,6 +2,7 @@ function doPost(e) {
   const params = e.parameter
   const action = getActionType(removePrefix(params.text))
   doAction(action, {
+    userName: params.user_name,
     text: params.text
   })
 }

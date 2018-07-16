@@ -12,24 +12,27 @@ function getActionType(text) {
   return triggers[text]
 }
 
-function doAction(event, args) {
+function doAction(event, payload) {
   // with TimeZone
   const m = Moment.moment().utc().add(9, 'hours')
+  const message = payload.userName + ': ' + m.format('HH:mm')
   switch(event) {
     case ADD_START_RECORD:
       addRecord({
         date: m.format('L'),
-        start: m.format('HH:mm')
+        start: m.format('HH:mm'),
+        userName: payload.userName
       })
-      postToSlack('STARTしました: ' + m.format('HH:mm'))
+      postToSlack('[START] ' + message)
       break
     case ADD_END_RECORD:
       updateLastRecord({
-        end: m.format('HH:mm')
+        end: m.format('HH:mm'),
+        userName: payload.userName
       })
-      postToSlack('ENDしました: ' + m.format('HH:mm'))
+      postToSlack('[END] ' + message)
       break;
     default:
-      throw 'Event is not found: ' + event
+      throw 'イベント(' + event + ')が見つかりませんでした。'
   }
 }
