@@ -1,11 +1,11 @@
-var ADD_START_RECORD = 'start'
-var ADD_END_RECORD = 'end'
+var START_EVENT = 'start'
+var END_EVENT = 'end'
 
 var triggers = {
-  'start': ADD_START_RECORD,
-  'はじめ': ADD_START_RECORD,
-  'end': ADD_END_RECORD,
-  'おわり': ADD_END_RECORD,
+  'start': START_EVENT,
+  'はじめ': START_EVENT,
+  'end': END_EVENT,
+  'おわり': END_EVENT,
 }
 
 function getActionType(text) {
@@ -16,23 +16,23 @@ function doAction(event, payload) {
   const now = Moment.moment().format("YYYY/MM/DD HH:mm")
   const message = payload.userName + ': ' + now
   switch (event) {
-    case ADD_START_RECORD:
+    case START_EVENT:
       addRecord({
-        eventName: ADD_START_RECORD,
+        eventName: START_EVENT,
         stampedAt: now,
         userName: payload.userName
       })
       postToSlack('[START] ' + message)
       break
-    case ADD_END_RECORD:
+    case END_EVENT:
       const lastRecord = getLastRecord(payload.userName)
-      if (lastRecord.eventName !== ADD_START_RECORD) {
+      if (lastRecord.eventName !== START_EVENT) {
         postToSlack(payload.userName + 'さんの開始記録がみつかりませんでした')
         return
       }
       const lastRow = lastRecord.row
       addRecord({
-        eventName: ADD_END_RECORD,
+        eventName: END_EVENT,
         stampedAt: now,
         result: '=B' + (lastRow + 1) + '-B' + lastRow,
         userName: payload.userName
