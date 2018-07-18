@@ -16,20 +16,25 @@ function doAction(event, payload) {
   // with TimeZone
   // const now = Moment.moment().utc().add(9, 'hours')
   const now = Moment.moment().format("YYYY/MM/DD HH:mm")
-  const message = payload.userName + ': ' + now.format('HH:mm')
+  const message = payload.userName + ': ' + now
   switch (event) {
     case ADD_START_RECORD:
       addRecord({
-        eventName: 'start',
+        eventName: ADD_START_RECORD,
         stampedAt: now,
         userName: payload.userName
       })
       postToSlack('[START] ' + message)
       break
     case ADD_END_RECORD:
-      const lastRow = getLastRow(payload.userName)
+      const lastRecord = getLastRecord(payload.userName)
+      if (lastRecord.eventName !== ADD_START_RECORD) {
+        postToSlack('開始記録がみつかりませんでした')
+        return        
+      }
+      const lastRow = lastRecord.row
       addRecord({
-        eventName: 'end',
+        eventName: ADD_END_RECORD,
         stampedAt: now,
         result: '=B' + (lastRow + 1) + '-B' + lastRow,
         userName: payload.userName

@@ -1,3 +1,7 @@
+var columns = [
+  'eventName', 'stampedAt', 'result'
+]
+
 function createSheetByName(name) {
   const properties = getProperties()
   const spreadsheet = SpreadsheetApp.openById(properties.SHEET_ID);
