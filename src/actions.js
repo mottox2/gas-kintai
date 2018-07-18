@@ -14,20 +14,26 @@ function getActionType(text) {
 
 function doAction(event, payload) {
   // with TimeZone
-  const m = Moment.moment().utc().add(9, 'hours')
-  const message = payload.userName + ': ' + m.format('HH:mm')
-  switch(event) {
+  // const now = Moment.moment().utc().add(9, 'hours')
+  const now = Moment.moment()
+  const message = payload.userName + ': ' + now.format('HH:mm')
+  switch (event) {
     case ADD_START_RECORD:
       addRecord({
-        date: m.format('L'),
-        start: m.format('HH:mm'),
+        eventName: 'start',
+        stampedAt: now.format("YYYY/MM/DD HH:mm"),
         userName: payload.userName
       })
       postToSlack('[START] ' + message)
       break
     case ADD_END_RECORD:
-      updateLastRecord({
-        end: m.format('HH:mm'),
+      const lastRecord = getLastRecord(payload.userName)
+      const startedAt = Moment.moment(lastRecord.stampedAt)
+      const diff = (now - startedAt) / 1000 / 3600 / 24
+      addRecord({
+        eventName: 'end',
+        stampedAt: now.format("YYYY/MM/DD HH:mm"),
+        result: '=B16-B17',
         userName: payload.userName
       })
       postToSlack('[END] ' + message)

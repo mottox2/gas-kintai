@@ -1,24 +1,27 @@
+var columns = [
+  'eventName', 'stampedAt', 'result'
+]
+
 function addRecord(payload) {
   const sheet = findOrCreateSheetByName(payload.userName)
   sheet.appendRow([
-    payload.date, payload.start, ''
+    payload.eventName, payload.stampedAt, payload.result || ''
   ])
 }
 
-function updateLastRecord(payload) {
-  const sheet = findOrCreateSheetByName(payload.userName)
-  const range = sheet.getRange(sheet.getLastRow(), 3, 1, 1)
-  range.setValue(payload.end);
+function getLastRow(sheetName) {
+  const sheet = findOrCreateSheetByName(sheetName)
+  return sheet.getLastRow()
 }
 
-function getLastRecord() {
-  const sheet = findOrCreateSheetByName(record.userName)
+function getLastRecord(sheetName) {
+  const sheet = findOrCreateSheetByName(sheetName)
   const lastRow = sheet.getRange(sheet.getLastRow(), 1, 1, sheet.getLastColumn())
   const values = lastRow.getValues()
 
   const record = values[0]
   var result = {}
-  columns.forEach(function(column, index) {
+  getColumns().forEach(function (column, index) {
     result[column] = record[index]
   })
   Logger.log(result)
