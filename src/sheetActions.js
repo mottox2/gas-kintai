@@ -5,11 +5,6 @@ function addRecord(payload) {
   ])
 }
 
-function getLastRow(sheetName) {
-  const sheet = findOrCreateSheetByName(sheetName)
-  return sheet.getLastRow()
-}
-
 function getLastRecord(sheetName) {
   const sheet = findOrCreateSheetByName(sheetName)
   const lastRow = sheet.getLastRow()
