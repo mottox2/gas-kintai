@@ -4,8 +4,10 @@ var END_EVENT = 'end'
 var triggers = {
   'start': START_EVENT,
   'はじめ': START_EVENT,
+  '再開': START_EVENT,
   'end': END_EVENT,
   'おわり': END_EVENT,
+  '休憩': END_EVENT,
 }
 
 function getActionType(text) {
