@@ -2,6 +2,7 @@
 # yarn lockfile v1
 
 
-"@types/google-apps-script@^0.0.25":
-  version "0.0.25"
-  resolved "https://registry.yarnpkg.com/@types/google-apps-script/-/google-apps-script-0.0.25.tgz#ec6ccd39fe690fc242749d35901f6adbfd63bcc3"
+"@types/google-apps-script@^0.0.44":
+  version "0.0.44"
+  resolved "https://registry.yarnpkg.com/@types/google-apps-script/-/google-apps-script-0.0.44.tgz#f6cb2faa72427db5de6b06d11a6524a628991694"
+  integrity sha512-572LQZmzf7Ym7e1vBGFiL/893gLQHACQQ/BxAOO9jkWid0twEwtZSy250wyAMz8QMuGceKz7US1f7c5dJ3JgzA==

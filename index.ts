@@ -1,14 +1,15 @@
-function doPost(e) {
+function doPost(e: any) {
   const params = e.parameter
-  const action = getActionType(removePrefix(params.text))
+  const actionName : any = removePrefix(params.text)
+  const action = getActionType(actionName)
   doAction(action, {
     userName: params.user_name,
     text: params.text
   })
 }
 
-function removePrefix(text) {
-  return text.replace(/kintai\ ?/, '')
+function removePrefix(text: string) {
+  return text.replace(/kintai\ ?/, '') || null
 }
 
 function getProperties() {
