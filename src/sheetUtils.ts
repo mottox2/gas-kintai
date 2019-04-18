@@ -1,8 +1,6 @@
-function addRecord(payload: any) {
-  const sheet = findOrCreateSheetByName(payload.userName)
-  sheet!.appendRow([
-    payload.eventName, payload.stampedAt, payload.result || ''
-  ])
+function addRecord(sheetName: string, payload: any) {
+  const sheet = findOrCreateSheetByName(sheetName)
+  sheet!.appendRow([payload.eventName, payload.stampedAt, payload.result || ''])
 }
 
 function getLastRecord(sheetName: string) {
@@ -12,9 +10,9 @@ function getLastRecord(sheetName: string) {
   const values = lastRecord.getValues()
 
   const record = values[0]
-  var result : any = {} //TODO
+  var result: any = {} //TODO
   result.row = lastRow
-  getColumns().forEach(function (column, index) {
+  getColumns().forEach(function(column, index) {
     result[column] = record[index]
   })
   return result

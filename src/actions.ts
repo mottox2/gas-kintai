@@ -3,15 +3,15 @@ var END_EVENT = 'end'
 const PING_EVENT = 'ping'
 
 var triggers = {
-  'start': START_EVENT,
-  'はじめ': START_EVENT,
-  '再開': START_EVENT,
-  'restart': START_EVENT,
-  'end': END_EVENT,
-  'おわり': END_EVENT,
-  '休憩': END_EVENT,
-  'stop': END_EVENT,
-  'ping': PING_EVENT,
+  start: START_EVENT,
+  はじめ: START_EVENT,
+  再開: START_EVENT,
+  restart: START_EVENT,
+  end: END_EVENT,
+  おわり: END_EVENT,
+  休憩: END_EVENT,
+  stop: END_EVENT,
+  ping: PING_EVENT
 }
 
 declare const Moment: any
@@ -23,14 +23,13 @@ function getActionType(text: TriggerKeys) {
 }
 
 function doAction(event: any, payload: any) {
-  const now = Moment.moment().format("YYYY/MM/DD HH:mm")
+  const now = Moment.moment().format('YYYY/MM/DD HH:mm')
   const message = payload.userName + ': ' + now
   switch (event) {
     case START_EVENT:
-      addRecord({
+      addRecord(payload.userName, {
         eventName: START_EVENT,
-        stampedAt: now,
-        userName: payload.userName
+        stampedAt: now
       })
       postToSlack('[START] ' + message)
       break
@@ -41,17 +40,18 @@ function doAction(event: any, payload: any) {
         return
       }
       const lastRow = lastRecord.row
-      addRecord({
+      addRecord(payload.userName, {
         eventName: END_EVENT,
         stampedAt: now,
-        result: '=B' + (lastRow + 1) + '-B' + lastRow,
-        userName: payload.userName
+        result: '=B' + (lastRow + 1) + '-B' + lastRow
       })
       postToSlack('[END] ' + message)
-      break;
+      break
     case PING_EVENT:
       postToSlack('pong')
+      break
     default:
-      throw 'イベント(' + event + ')が見つかりませんでした。'
+      postToSlack(`*コマンドが見つかりませんでした。*
+コマンド例: \`kintai start\`, \`kintai end\`, \`kintai stop\`, \`kintai restart\``)
   }
 }
