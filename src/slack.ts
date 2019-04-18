@@ -1,4 +1,4 @@
-function postToSlack(message) {
+function postToSlack(message: string) {
   const properties = getProperties()
   const payload = {
     "text": message,
@@ -6,12 +6,11 @@ function postToSlack(message) {
     "username": "kintai",
     "icon_emoji": ":+1:"
   }
-  const options = {
-    "method": "POST",
-    "payload": JSON.stringify(payload)
-  }
   const url = properties.SLACK_WEBHOOK_URL
-  const response = UrlFetchApp.fetch(url, options);
+  const response = UrlFetchApp.fetch(url!, {
+    method: "post",
+    payload: JSON.stringify(payload)
+  });
   const content = response.getContentText("UTF-8");
   Logger.log(content)
 }
