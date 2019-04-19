@@ -1,19 +1,41 @@
-function addRecord(sheetName: string, payload: any) {
-  const sheet = findOrCreateSheetByName(sheetName)
-  sheet!.appendRow([payload.eventName, payload.stampedAt, payload.result || ''])
+type RowTimeRecord = [Date, Date | '', string]
+
+class TimeRecord {
+  public startedAt: Date
+  public endedAt: Date | ''
+  public row: number
+
+  static fromArray(row: number, array: RowTimeRecord) {
+    return new this(row, array[0], array[1])
+  }
+
+  constructor(row: number, startedAt: Date, endedAt: Date | '') {
+    this.row = row
+    this.startedAt = startedAt
+    this.endedAt = endedAt
+  }
+
+  isComplete() {
+    return this.endedAt
+  }
+
+  toArray(): RowTimeRecord {
+    // 集計用関数、スプレッドシードのものを用いる
+    const sumFunc = `= IF(B${this.row} <> "", B${this.row} - A${this.row}, 0)`
+    return [this.startedAt, this.endedAt, sumFunc]
+  }
 }
 
-function getLastRecord(sheetName: string) {
+function updateRecord(sheetName: string, record: TimeRecord) {
   const sheet = findOrCreateSheetByName(sheetName)
-  const lastRow = sheet!.getLastRow()
-  const lastRecord = sheet!.getRange(lastRow, 1, 1, sheet!.getLastColumn())
-  const values = lastRecord.getValues()
+  const range = sheet!.getRange(record.row, 1, 1, sheet!.getLastColumn())
+  range.setValues([record.toArray()])
+}
 
-  const record = values[0]
-  var result: any = {} //TODO
-  result.row = lastRow
-  getColumns().forEach(function(column, index) {
-    result[column] = record[index]
-  })
-  return result
+function getLastRecord(sheetName: string): TimeRecord {
+  const sheet = findOrCreateSheetByName(sheetName)
+  const rowNum = sheet!.getLastRow()
+  const range = sheet!.getRange(rowNum, 1, 1, sheet!.getLastColumn())
+  const record = TimeRecord.fromArray(rowNum, range.getValues()[0] as RowTimeRecord)
+  return record
 }
