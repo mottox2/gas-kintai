@@ -35,7 +35,12 @@ function doAction(event: any, payload: any) {
   switch (event) {
     case START_EVENT:
       if (!lastRecord.isComplete()) {
-        postToSlack(`前回の完了記録が見つかりません。`)
+        postToSlack(``, [
+          {
+            color: '#D10D20',
+            text: '前回の完了記録が見つかりませんでした'
+          }
+        ])
         break
       }
       const newRecord = new TimeRecord(lastRecord.row + 1, now, '')
@@ -51,7 +56,12 @@ function doAction(event: any, payload: any) {
       break
     case END_EVENT:
       if (lastRecord.isComplete()) {
-        postToSlack(`開始記録が見つかりませんでした`)
+        postToSlack(``, [
+          {
+            color: '#D10D20',
+            text: '開始記録が見つかりませんでした'
+          }
+        ])
         break
       }
       lastRecord.endedAt = now
