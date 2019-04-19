@@ -22,10 +22,15 @@ function getActionType(text: TriggerKeys) {
   return triggers[text]
 }
 
+const authorLink = (spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet, sheetName: string) =>
+  `https://docs.google.com/spreadsheets/d/${spreadsheet.getId()}#gid=${spreadsheet
+    .getSheetByName(sheetName)
+    .getSheetId()}`
+
 function doAction(event: any, payload: any) {
   const now = Moment.moment().format('YYYY/MM/DD HH:mm')
-  const message = payload.userName + ': ' + now
   const lastRecord = getLastRecord(payload.userName)
+  const spreadsheet = getSpreadsheet()
   Logger.log(lastRecord.row)
   switch (event) {
     case START_EVENT:
@@ -35,7 +40,14 @@ function doAction(event: any, payload: any) {
       }
       const newRecord = new TimeRecord(lastRecord.row + 1, now, '')
       updateRecord(payload.userName, newRecord)
-      postToSlack('[START] ' + message)
+      postToSlack('開始時刻を記録しました。', [
+        {
+          author_name: '勤怠記録',
+          author_link: authorLink(spreadsheet, payload.userName),
+          footer: payload.userName,
+          color: '#36a64f'
+        }
+      ])
       break
     case END_EVENT:
       if (lastRecord.isComplete()) {
@@ -44,7 +56,26 @@ function doAction(event: any, payload: any) {
       }
       lastRecord.endedAt = now
       updateRecord(payload.userName, lastRecord)
-      postToSlack('[END] ' + message)
+      postToSlack('お疲れ様です。終了時刻を記録しました。', [
+        {
+          author_name: '勤怠記録',
+          author_link: authorLink(spreadsheet, payload.userName),
+          fields: [
+            {
+              title: '開始時間',
+              value: Moment.moment(lastRecord.startedAt).format('MM/DD HH:mm'),
+              short: true
+            },
+            {
+              title: '終了時間',
+              value: Moment.moment(lastRecord.endedAt).format('MM/DD HH:mm'),
+              short: true
+            }
+          ],
+          footer: payload.userName,
+          color: '#36a64f'
+        }
+      ])
       break
     case PING_EVENT:
       postToSlack('pong')

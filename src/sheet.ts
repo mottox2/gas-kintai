@@ -11,7 +11,7 @@ function createSheetByName(name: string) {
   newSheet.setName(name)
   newSheet.appendRow(columns)
   // NOTE: 集計用の列は時間表記
-  newSheet.getRange('C:C').setNumberFormat('[hh]:[mm]')
+  newSheet.getRange('C:C').setNumberFormat('hh:mm')
   return newSheet
 }
 
