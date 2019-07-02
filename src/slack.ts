@@ -1,4 +1,4 @@
-function postToSlack(text: string, attachments?: any[]) {
+function buildMessage(text: string, attachments?: any[]) {
   const properties = getProperties()
   const payload = {
     text,
@@ -7,6 +7,7 @@ function postToSlack(text: string, attachments?: any[]) {
     username: 'kintai',
     icon_emoji: ':timer_clock:'
   }
+  return payload
   const url = properties.SLACK_WEBHOOK_URL
   const response = UrlFetchApp.fetch(url!, {
     method: 'post',

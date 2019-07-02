@@ -16,8 +16,8 @@ function removePrefix(text: string) {
 
 function doCommand(payload: Payload) {
   const now = Moment.moment().format('YYYY/MM/DD HH:mm')
-  const lastRecord = getLastRecord(payload.userName)
   const spreadsheet = getSpreadsheet()
+  const lastRecord = getLastRecord(spreadsheet, payload.userName)
   Logger.log(lastRecord.row)
   const command = removePrefix(payload.text)
   switch (command) {
@@ -26,11 +26,11 @@ function doCommand(payload: Payload) {
     case 'restart':
     case '再開':
       if (!lastRecord.isComplete()) {
-        return postToSlack(``, notFoundEndMessage())
+        return buildMessage(``, notFoundEndMessage())
       }
       const newRecord = new TimeRecord(lastRecord.row + 1, now, '')
-      updateRecord(payload.userName, newRecord)
-      return postToSlack(
+      updateRecord(spreadsheet, payload.userName, newRecord)
+      return buildMessage(
         '開始時刻を記録しました。',
         startMessage({ spreadsheet, userName: payload.userName })
       )
@@ -39,18 +39,18 @@ function doCommand(payload: Payload) {
     case '休憩':
     case 'stop':
       if (lastRecord.isComplete()) {
-        return postToSlack(``, notFoundStartMessage())
+        return buildMessage(``, notFoundStartMessage())
       }
       lastRecord.endedAt = now
-      updateRecord(payload.userName, lastRecord)
-      return postToSlack(
+      updateRecord(spreadsheet, payload.userName, lastRecord)
+      return buildMessage(
         'お疲れ様です。終了時刻を記録しました。',
         endMessage({ spreadsheet, record: lastRecord, userName: payload.userName })
       )
     case 'ping':
-      return postToSlack('pong')
+      return buildMessage('pong')
     default:
-      postToSlack(`*コマンドが見つかりませんでした。*
+      return buildMessage(`*コマンドが見つかりませんでした。*
 コマンド例: \`kintai start\`, \`kintai end\`, \`kintai stop\`, \`kintai restart\``)
   }
 }
