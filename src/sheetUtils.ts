@@ -26,14 +26,21 @@ class TimeRecord {
   }
 }
 
-function updateRecord(sheetName: string, record: TimeRecord) {
-  const sheet = findOrCreateSheetByName(sheetName)
+function updateRecord(
+  spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet,
+  sheetName: string,
+  record: TimeRecord
+) {
+  const sheet = findOrCreateSheetByName(spreadsheet, sheetName)
   const range = sheet!.getRange(record.row, 1, 1, sheet!.getLastColumn())
   range.setValues([record.toArray()])
 }
 
-function getLastRecord(sheetName: string): TimeRecord {
-  const sheet = findOrCreateSheetByName(sheetName)
+function getLastRecord(
+  spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet,
+  sheetName: string
+): TimeRecord {
+  const sheet = findOrCreateSheetByName(spreadsheet, sheetName)
   const rowNum = sheet!.getLastRow()
   const range = sheet!.getRange(rowNum, 1, 1, sheet!.getLastColumn())
   const record = TimeRecord.fromArray(rowNum, range.getValues()[0] as RowTimeRecord)

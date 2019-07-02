@@ -4,9 +4,7 @@ function getSpreadsheet(sheetId?: string | null): GoogleAppsScript.Spreadsheet.S
   return sheetId ? SpreadsheetApp.openById(sheetId) : SpreadsheetApp.getActive()
 }
 
-function createSheetByName(name: string) {
-  const properties = getProperties()
-  const spreadsheet = getSpreadsheet(properties.SHEET_ID)
+function createSheetByName(spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet, name: string) {
   const newSheet = spreadsheet.insertSheet()
   newSheet.setName(name)
   newSheet.appendRow(columns)
@@ -15,9 +13,10 @@ function createSheetByName(name: string) {
   return newSheet
 }
 
-function findOrCreateSheetByName(name: string) {
-  const properties = getProperties()
-  const spreadsheet = getSpreadsheet(properties.SHEET_ID)
+function findOrCreateSheetByName(
+  spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet,
+  name: string
+) {
   const sheet = spreadsheet.getSheetByName(name)
-  return sheet || createSheetByName(name)
+  return sheet || createSheetByName(spreadsheet, name)
 }

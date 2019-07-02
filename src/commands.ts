@@ -14,10 +14,15 @@ function removePrefix(text: string) {
   return text.replace(/kintai\ ?/, '') || null
 }
 
-function doCommand(payload: Payload) {
+// slash commandsの結果を自分だけが見る場合付与
+const ephemeralOption = {
+  response_type: 'ephemeral'
+}
+
+function runCommand(payload: Payload) {
   const now = Moment.moment().format('YYYY/MM/DD HH:mm')
-  const lastRecord = getLastRecord(payload.userName)
   const spreadsheet = getSpreadsheet()
+  const lastRecord = getLastRecord(spreadsheet, payload.userName)
   Logger.log(lastRecord.row)
   const command = removePrefix(payload.text)
   switch (command) {
@@ -26,31 +31,36 @@ function doCommand(payload: Payload) {
     case 'restart':
     case '再開':
       if (!lastRecord.isComplete()) {
-        return postToSlack(``, notFoundEndMessage())
+        return buildMessage(notFoundEndBlocks())
       }
       const newRecord = new TimeRecord(lastRecord.row + 1, now, '')
-      updateRecord(payload.userName, newRecord)
-      return postToSlack(
-        '開始時刻を記録しました。',
-        startMessage({ spreadsheet, userName: payload.userName })
-      )
+      updateRecord(spreadsheet, payload.userName, newRecord)
+      return buildMessage(startBlocks({ userName: payload.userName }))
     case 'end':
     case 'おわり':
     case '休憩':
     case 'stop':
       if (lastRecord.isComplete()) {
-        return postToSlack(``, notFoundStartMessage())
+        return buildMessage(notFoundStartBlocks())
       }
       lastRecord.endedAt = now
-      updateRecord(payload.userName, lastRecord)
-      return postToSlack(
-        'お疲れ様です。終了時刻を記録しました。',
-        endMessage({ spreadsheet, record: lastRecord, userName: payload.userName })
+      updateRecord(spreadsheet, payload.userName, lastRecord)
+      return buildMessage(
+        endBlocks({ spreadsheet, record: lastRecord, userName: payload.userName })
       )
     case 'ping':
-      return postToSlack('pong')
+      return buildMessage([textBlock('pong')], ephemeralOption)
+    case 'debug':
+      return buildMessage([textBlock(JSON.stringify(payload))], ephemeralOption)
     default:
-      postToSlack(`*コマンドが見つかりませんでした。*
-コマンド例: \`kintai start\`, \`kintai end\`, \`kintai stop\`, \`kintai restart\``)
+      return buildMessage(
+        [
+          textBlock(`:warning: *コマンドが見つかりませんでした。*
+コマンド例: \`kintai start\`, \`kintai end\`, \`kintai stop\`, \`kintai restart\``),
+          dividerBlock(),
+          textBlock(lastRecord.isComplete() ? '現在 *退勤中* です。' : '現在 *勤務中* です。')
+        ],
+        ephemeralOption
+      )
   }
 }

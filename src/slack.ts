@@ -1,17 +1,12 @@
-function postToSlack(text: string, attachments?: any[]) {
-  const properties = getProperties()
+interface MessageOptions {
+  response_type?: string
+}
+
+function buildMessage(blocks: Block[], options: MessageOptions = {}) {
   const payload = {
-    text,
-    attachments,
-    channel: properties.SLACK_CHANNEL,
-    username: 'kintai',
-    icon_emoji: ':timer_clock:'
+    text: '',
+    response_type: options.response_type || 'in_channel',
+    blocks
   }
-  const url = properties.SLACK_WEBHOOK_URL
-  const response = UrlFetchApp.fetch(url!, {
-    method: 'post',
-    payload: JSON.stringify(payload)
-  })
-  const content = response.getContentText('UTF-8')
-  Logger.log(content)
+  return payload
 }
