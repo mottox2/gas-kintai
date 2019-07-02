@@ -19,7 +19,7 @@ const ephemeralOption = {
   response_type: 'ephemeral'
 }
 
-function doCommand(payload: Payload) {
+function runCommand(payload: Payload) {
   const now = Moment.moment().format('YYYY/MM/DD HH:mm')
   const spreadsheet = getSpreadsheet()
   const lastRecord = getLastRecord(spreadsheet, payload.userName)
@@ -49,11 +49,17 @@ function doCommand(payload: Payload) {
         endBlocks({ spreadsheet, record: lastRecord, userName: payload.userName })
       )
     case 'ping':
-      return buildMessage(textBlocks('pong'), ephemeralOption)
+      return buildMessage([textBlock('pong')], ephemeralOption)
+    case 'debug':
+      return buildMessage([textBlock(JSON.stringify(payload))], ephemeralOption)
     default:
       return buildMessage(
-        textBlocks(`:warning: *コマンドが見つかりませんでした。*
+        [
+          textBlock(`:warning: *コマンドが見つかりませんでした。*
 コマンド例: \`kintai start\`, \`kintai end\`, \`kintai stop\`, \`kintai restart\``),
+          dividerBlock(),
+          textBlock(lastRecord.isComplete() ? '現在 *退勤中* です。' : '現在 *勤務中* です。')
+        ],
         ephemeralOption
       )
   }

@@ -63,12 +63,14 @@ const endBlocks: (args: any) => Block[] = ({ spreadsheet, record, userName }: an
   ]
 }
 
-const textBlocks = (text: string) => [
-  {
-    type: 'section',
-    text: {
-      type: 'mrkdwn',
-      text
-    }
+const textBlock: (text: string) => Block = text => ({
+  type: 'section',
+  text: {
+    type: 'mrkdwn',
+    text
   }
-]
+})
+
+const dividerBlock: () => Block = () => ({
+  type: 'divider'
+})

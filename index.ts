@@ -1,8 +1,9 @@
 function doPost(e: any) {
   const params = e.parameter
-  const payload = doCommand({
+  const payload = runCommand({
     userName: params.user_name,
-    text: params.text
+    text: params.text,
+    ...params
   })
   return ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(
     ContentService.MimeType.JSON
