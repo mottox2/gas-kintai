@@ -14,6 +14,11 @@ function removePrefix(text: string) {
   return text.replace(/kintai\ ?/, '') || null
 }
 
+// slash commandsの結果を自分だけが見る場合付与
+const ephemeralOption = {
+  response_type: 'ephemeral'
+}
+
 function doCommand(payload: Payload) {
   const now = Moment.moment().format('YYYY/MM/DD HH:mm')
   const spreadsheet = getSpreadsheet()
@@ -26,31 +31,30 @@ function doCommand(payload: Payload) {
     case 'restart':
     case '再開':
       if (!lastRecord.isComplete()) {
-        return buildMessage(``, notFoundEndMessage())
+        return buildMessage(notFoundEndBlocks())
       }
       const newRecord = new TimeRecord(lastRecord.row + 1, now, '')
       updateRecord(spreadsheet, payload.userName, newRecord)
-      return buildMessage(
-        '開始時刻を記録しました。',
-        startMessage({ spreadsheet, userName: payload.userName })
-      )
+      return buildMessage(startBlocks({ userName: payload.userName }))
     case 'end':
     case 'おわり':
     case '休憩':
     case 'stop':
       if (lastRecord.isComplete()) {
-        return buildMessage(``, notFoundStartMessage())
+        return buildMessage(notFoundStartBlocks())
       }
       lastRecord.endedAt = now
       updateRecord(spreadsheet, payload.userName, lastRecord)
       return buildMessage(
-        'お疲れ様です。終了時刻を記録しました。',
-        endMessage({ spreadsheet, record: lastRecord, userName: payload.userName })
+        endBlocks({ spreadsheet, record: lastRecord, userName: payload.userName })
       )
     case 'ping':
-      return buildMessage('pong')
+      return buildMessage(textBlocks('pong'), ephemeralOption)
     default:
-      return buildMessage(`*コマンドが見つかりませんでした。*
-コマンド例: \`kintai start\`, \`kintai end\`, \`kintai stop\`, \`kintai restart\``)
+      return buildMessage(
+        textBlocks(`:warning: *コマンドが見つかりませんでした。*
+コマンド例: \`kintai start\`, \`kintai end\`, \`kintai stop\`, \`kintai restart\``),
+        ephemeralOption
+      )
   }
 }
