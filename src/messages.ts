@@ -4,7 +4,7 @@ interface Block {
   elements?: any[]
 }
 
-const notFoundEndBlocks: () => Block[] = () => [
+const notFoundEndBlocks: (args: { record: TimeRecord }) => Block[] = ({ record }) => [
   {
     type: 'section',
     text: {
@@ -12,10 +12,19 @@ const notFoundEndBlocks: () => Block[] = () => [
       text: ':warning: 前回の完了記録が見つかりませんでした',
       emoji: true
     }
+  },
+  {
+    type: 'context',
+    elements: [
+      {
+        type: 'mrkdwn',
+        text: `前回の開始時刻: ${Moment.moment(record.startedAt).format('MM/DD HH:mm')}`
+      }
+    ]
   }
 ]
 
-const notFoundStartBlocks: () => Block[] = () => [
+const notFoundStartBlocks: (args: { record: TimeRecord }) => Block[] = ({ record }) => [
   {
     type: 'section',
     text: {
@@ -23,6 +32,15 @@ const notFoundStartBlocks: () => Block[] = () => [
       text: ':warning: 開始記録が見つかりませんでした',
       emoji: true
     }
+  },
+  {
+    type: 'context',
+    elements: [
+      {
+        type: 'mrkdwn',
+        text: `前回の終了時刻: ${Moment.moment(record.endedAt).format('MM/DD HH:mm')}`
+      }
+    ]
   }
 ]
 

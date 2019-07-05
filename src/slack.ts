@@ -10,3 +10,14 @@ function buildMessage(blocks: Block[], options: MessageOptions = {}) {
   }
   return payload
 }
+
+function sendMessage(payload: any) {
+  const properties = getProperties()
+  const url = properties.SLACK_WEBHOOK_URL
+  const response = UrlFetchApp.fetch(url!, {
+    method: 'post',
+    payload: JSON.stringify(payload)
+  })
+  const content = response.getContentText('UTF-8')
+  Logger.log(content)
+}
